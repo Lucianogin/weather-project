@@ -3,45 +3,44 @@ import { Component, OnInit } from '@angular/core';
 import { weatherAll, weatherModel } from 'src/app/models/weather-model';
 import { WeatherServiceService } from 'src/app/services/weather-service.service';
 import { ToastrService } from 'ngx-toastr';
-import { LoaderService } from '../loader/loader.service'
 
 @Component({
   selector: 'app-search-weather',
   templateUrl: './search-weather.component.html',
-  styleUrls: ['./search-weather.component.css']
+  styleUrls: ['./search-weather.component.css'],
 })
-export class SearchWeatherComponent implements OnInit{
-
-  constructor( private WeatherService: WeatherServiceService, private toastr: ToastrService, public LoaderService: LoaderService) { }
+export class SearchWeatherComponent implements OnInit {
+  constructor(
+    private WeatherService: WeatherServiceService,
+    private toastr: ToastrService
+  ) {}
 
   // weatherArray: weatherModel[] = [];
   weatherArray: weatherAll[] = [];
 
-  loading: boolean = false;
-
-  onSubmit(cidade:string):void{
-    if(cidade == ''){
+  onSubmit(cidade: string): void {
+    if (cidade == '') {
       this.toastr.error('Campo vazio! Por favor, digite algo!');
-    }
-    else{
+    } else {
       this.WeatherService.getWeatherData(cidade).subscribe(
-        (data: HttpResponse<weatherModel>) =>{
-          if(this.weatherArray.filter(weatherItem => weatherItem.name === data.body.name).length === 0){
+        (data: HttpResponse<weatherModel>) => {
+          if (
+            this.weatherArray.filter(
+              (weatherItem) => weatherItem.name === data.body.name
+            ).length === 0
+          ) {
             // this.weatherArray.push(data.body);
             this.fillArray(data.body);
-          }
-          else{
+          } else {
             this.toastr.error('Cidade já inserida!');
           }
         },
-        (err: HttpErrorResponse)=>{
-          console.log(err)
-          this.toastr.error('Cidade inexistente!')
+        (err: HttpErrorResponse) => {
+          console.log(err);
+          this.toastr.error('Cidade inexistente!');
         },
-        () => {
-
-        }
-      )
+        () => {}
+      );
     }
   }
 
@@ -58,28 +57,25 @@ export class SearchWeatherComponent implements OnInit{
 
       icon: data.weather[0].icon,
 
-      isDay: true
-    }
+      isDay: true,
+    };
 
-    weather.isDay = this.calcIsDay(weather)
+    weather.isDay = this.calcIsDay(weather);
 
     this.weatherArray.push(weather);
+  };
 
-  }
-
-  calcIsDay = (data: weatherAll):boolean => {
+  calcIsDay = (data: weatherAll): boolean => {
     let sunsetTime = new Date(data.sunset * 1000);
     let sunriseTime = new Date(data.sunrise * 1000);
     let currentTime = new Date();
 
-    let isDay = currentTime > sunriseTime && currentTime < sunsetTime
+    let isDay = currentTime > sunriseTime && currentTime < sunsetTime;
 
     return isDay;
+  };
 
-  }
-
-  ngOnInit(){
+  ngOnInit() {
     this.fillArray;
   }
-
 }

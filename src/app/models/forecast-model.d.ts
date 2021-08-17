@@ -25,7 +25,8 @@ interface Coord {
 export interface TempMedia {
   tempMedia: number;
   temp_minMedia: number;
-  temp_maxMedia : number;
+  temp_maxMedia: number;
+  icon: string;
 }
 
 export interface List {
